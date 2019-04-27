@@ -33,6 +33,11 @@ import If from 'components/If';
 import AboutPageModal from 'components/AppHeader/AboutPageModal';
 import FeatureHeading from 'components/AppHeader/AppToolBar/FeatureHeading';
 import ProductEdition from 'components/AppHeader/AppToolBar/ProductEdition';
+import Button from '@material-ui/core/Button';
+import { ClickAwayListener } from '@material-ui/core';
+import Grow from '@material-ui/core/Grow';
+import Paper from '@material-ui/core/Paper';
+import Popper from '@material-ui/core/Popper';
 
 const styles = (theme) => {
   return {
@@ -56,7 +61,7 @@ const styles = (theme) => {
       '&:focus': {
         outline: 'none',
       },
-      textDecoration: 'none',
+      textDecoration: 'none !important',
       color: 'inherit',
     },
   };
@@ -148,36 +153,38 @@ class AppToolbar extends React.PureComponent<IAppToolbarProps, IAppToolbarState>
           </IconButton>
         </div>
         <ProductEdition />
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl as HTMLElement}
-          open={Boolean(anchorEl)}
-          onClose={this.closeSettings}
-          anchorPosition={{
-            left: 0,
-            top: 40,
-          }}
-        >
-          <a
-            className={classes.anchorMenuItem}
-            href={this.getDocsUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MenuItem onClick={this.closeSettings}>
-              {T.translate('features.Navbar.ProductDropdown.documentationLabel')}
-            </MenuItem>
-          </a>
-          <If condition={Theme.showAboutProductModal === true}>
-            <MenuItem onClick={this.toggleAboutPage}>
-              <a>
-                {T.translate('features.Navbar.ProductDropdown.aboutLabel', {
-                  productName: Theme.productName,
-                })}
-              </a>
-            </MenuItem>
-          </If>
-        </Menu>
+        <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} transition disablePortal>
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={this.closeSettings}>
+                  <a
+                    className={classes.anchorMenuItem}
+                    href={this.getDocsUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MenuItem onClick={this.closeSettings}>
+                      {T.translate('features.Navbar.ProductDropdown.documentationLabel')}
+                    </MenuItem>
+                  </a>
+                  <If condition={Theme.showAboutProductModal === true}>
+                    <MenuItem onClick={this.toggleAboutPage}>
+                      <a>
+                        {T.translate('features.Navbar.ProductDropdown.aboutLabel', {
+                          productName: Theme.productName,
+                        })}
+                      </a>
+                    </MenuItem>
+                  </If>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
         <If condition={Theme.showAboutProductModal === true}>
           <AboutPageModal
             cdapVersion={cdapVersion}
