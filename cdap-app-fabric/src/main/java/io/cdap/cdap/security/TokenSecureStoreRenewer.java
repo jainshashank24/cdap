@@ -120,7 +120,7 @@ public class TokenSecureStoreRenewer extends SecureStoreRenewer {
         HBaseTokenUtils.obtainToken(yarnConf, refreshedCredentials);
       }
 
-      if (secureExplore) {
+      if (User.isSecurityEnabled()) {
         HiveTokenUtils.obtainTokens(cConf, refreshedCredentials);
         JobHistoryServerTokenUtils.obtainToken(yarnConf, refreshedCredentials);
       }
